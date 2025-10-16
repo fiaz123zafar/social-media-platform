@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+        <div>
+            <strong>{{ post.user.username }}</strong>
+            <small style="color: #777; display: block;">{{ post.created_at|date:"M d, Y H:i" }}</small>
+        </div>
+    </div>
+    
+    <p style="margin-bottom: 1rem;">{{ post.content }}</p>
+    
+    {% if post.image %}
+        <img src="{{ post.image.url }}" style="width: 100%; border-radius: 8px;">
+    {% endif %}
+    
+    <div style="margin-top: 1rem;">
+        <a href="{% url 'like_post' post.pk %}" class="btn btn-secondary">
+            ❤️ {{ post.total_likes }}
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Comments</h3>
+    <form method="POST" style="margin-top: 1rem;">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Add Comment</button>
+    </form>
+    
+    <div style="margin-top: 2rem;">
+        {% for comment in comments %}
+            <div style="padding: 1rem; background: #f8f9fa; border-radius: 8px; margin-bottom: 1rem;">
+                <strong>{{ comment.user.username }}</strong>
+                <p style="margin: 0.5rem 0;">{{ comment.content }}</p>
+                <small style="color: #777;">{{ comment.created_at|date:"M d, Y H:i" }}</small>
+            </div>
+        {% empty %}
+            <p style="color: #777;">No comments yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<a href="{% url 'home' %}" class="btn btn-secondary">Back to Feed</a>
+{% endblock %}

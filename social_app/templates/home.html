@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <h2>Create New Post</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Post</button>
+    </form>
+</div>
+
+<h2 style="color: white; margin-bottom: 1rem;">Feed</h2>
+
+{% for post in posts %}
+<div class="card">
+    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+        <div>
+            <strong>{{ post.user.username }}</strong>
+            <small style="color: #777; display: block;">{{ post.created_at|date:"M d, Y H:i" }}</small>
+        </div>
+    </div>
+    
+    <p style="margin-bottom: 1rem;">{{ post.content }}</p>
+    
+    {% if post.image %}
+        <img src="{{ post.image.url }}" style="width: 100%; border-radius: 8px; margin-bottom: 1rem;">
+    {% endif %}
+    
+    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+        <a href="{% url 'like_post' post.pk %}" class="btn btn-secondary">
+            ❤️ {{ post.total_likes }}
+        </a>
+        <a href="{% url 'post_detail' post.pk %}" class="btn btn-secondary">
+            💬 {{ post.total_comments }}
+        </a>
+        {% if user == post.user %}
+            <a href="{% url 'delete_post' post.pk %}" class="btn btn-danger">Delete</a>
+        {% endif %}
+    </div>
+</div>
+{% empty %}
+<div class="card">
+    <p>No posts yet. Be the first to post!</p>
+</div>
+{% endfor %}
+{% endblock %}
